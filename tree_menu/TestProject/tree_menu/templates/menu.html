@@ -1,0 +1,12 @@
+<ul>
+    {% for menu_item in menu_items %}
+        <li>
+            <a href="">{{ menu_item.name }}</a>
+        </li>
+
+        <!-- {% if item.child_items %}
+            {% include 'menu/nested_menu.html' with items=item.child_items %}
+        {% endif %} -->
+
+    {% endfor %}
+</ul>
