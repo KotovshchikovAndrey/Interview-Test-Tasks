@@ -10,55 +10,35 @@ class MenuService(tp.Generic[Menu, MenuItem]):
     menu: tp.Type[Menu]
     menu_item: tp.Type[MenuItem]
 
-    def __init__(
-        self,
-        menu: tp.Type[Menu],
-        menu_item: tp.Type[MenuItem],
-    ) -> None:
+    def __init__(self, menu: tp.Type[Menu], menu_item: tp.Type[MenuItem]) -> None:
         self.menu = menu
         self.menu_item = menu_item
 
     def get_menu_items(self, menu_name: str):
-        menu = self.menu_item.objects.filter(menu__name=menu_name, parent=None)
-        return menu
+        menu_items = self.menu_item.objects.filter(
+            menu__name=menu_name,
+            parent=None,
+        ).values()
 
-    def get_item_parents_count(self, item_id: int):
-        item = self.menu_item.objects.filter(id=item_id).first()
-        if item is None:
-            return
+        return menu_items
 
-        item_parents_count = 0
-        current_parent = item.parent
-        while current_parent is not None:
-            item_parents_count += 1
-            current_parent = current_parent.parent
+    def get_tree_menu(self, menu_name: str):
+        items = self.menu_item.objects.filter(
+            menu__name=menu_name,
+            parent=None,
+        ).values()
 
-        return item_parents_count
+        for item in items:
+            item["children"] = self.get_item_children(item_id=item["id"])
 
-    def draw_tree_menu(
-        self,
-        menu_items: tp.List[MenuItem],
-        limit: int = 1,
-        tree="",
-    ):
-        for menu_item in menu_items:
-            if limit == 0:
-                break
+        return items
 
-            tree += f"""
-            <li>
-                <a href="">{menu_item.name}</a>
-            </li>
-            """
+    def get_item_children(self, item_id: int):
+        children = self.menu_item.objects.filter(parent=item_id).values("id", "name")
+        for child in children:
+            child["children"] = self.get_item_children(child["id"])
 
-            item_children = menu_item.children.all()
-            if item_children:
-                childen_tree = self.draw_tree_menu(
-                    menu_items=item_children, limit=limit - 1
-                )
-                tree += f"<ul>{childen_tree}</ul"
-
-        return tree
+        return children
 
 
 class ServiceFactory:

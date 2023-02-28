@@ -37,7 +37,6 @@ class MenuItem(models.Model):
         null=True,
         blank=True,
         verbose_name="Верхний(Родительский) элемент",
-        related_name="children",
     )
 
     class Meta:

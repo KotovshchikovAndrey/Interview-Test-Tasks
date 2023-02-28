@@ -9,4 +9,4 @@ class MenuAdmin(admin.ModelAdmin):
 
 @admin.register(models.MenuItem)
 class MenuItemAdmin(admin.ModelAdmin):
-    pass
+    readonly_fields = ("id",)
