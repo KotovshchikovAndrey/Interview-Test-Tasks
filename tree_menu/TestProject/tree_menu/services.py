@@ -40,6 +40,17 @@ class MenuService(tp.Generic[Menu, MenuItem]):
 
         return children
 
+    def get_item_parents_id(self, item_id: int):
+        item = self.menu_item.objects.filter(id=item_id).first()
+
+        parent = item.parent
+        parents_id = []
+        while parent is not None:
+            parents_id.append(parent.id)
+            parent = parent.parent
+
+        return parents_id
+
 
 class ServiceFactory:
     services = {

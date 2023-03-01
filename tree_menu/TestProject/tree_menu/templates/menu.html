@@ -4,8 +4,16 @@
             <a href="{% url 'menu' item_id=menu_item.id %}">{{ menu_item.name }}</a>
         </li>
         
-        {% if menu_item.children %}
+        {% if menu_item.children and menu_item.id in selected_item_parents_id %}
             {% include 'menu.html' with menu_items=menu_item.children %}
+        {% elif selected_item_id == menu_item.id %}
+            <ul>
+                {% for child in menu_item.children %}
+                    <li>
+                        <a href="{% url 'menu' item_id=child.id %}">{{ child.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
         {% endif %}
 
     {% endfor %}

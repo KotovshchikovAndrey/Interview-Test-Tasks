@@ -15,7 +15,10 @@ def get_menu(context, name: str):
         return context_data
 
     tree_menu = service.get_tree_menu(menu_name=name)
+    item_parents_id = service.get_item_parents_id(item_id=selected_item_id)
+
     context_data["menu_items"] = tree_menu
     context_data["selected_item_id"] = selected_item_id
+    context_data["selected_item_parents_id"] = item_parents_id
 
     return context_data
