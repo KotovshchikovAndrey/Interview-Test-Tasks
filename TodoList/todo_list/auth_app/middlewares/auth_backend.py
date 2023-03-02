@@ -1,9 +1,8 @@
 import jwt
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from rest_framework import authentication
 from rest_framework.exceptions import AuthenticationFailed
-
-from auth_app.models import RepositoryFactory
 
 
 class JWTAuthenticationBackend(authentication.BaseAuthentication):
@@ -24,8 +23,7 @@ class JWTAuthenticationBackend(authentication.BaseAuthentication):
         except jwt.InvalidTokenError:
             raise AuthenticationFailed("Невалидный Токен!")
 
-        repository = RepositoryFactory.get_repository("UserRepository")
-        current_user = repository.filter(id=payload["id"]).first()
+        current_user = get_user_model().objects.filter(id=payload["id"]).first()
         if current_user is None:
             raise AuthenticationFailed("Пользователь не найден!")
 

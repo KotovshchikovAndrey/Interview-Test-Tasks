@@ -67,11 +67,3 @@ class Token(models.Model):
 
     def __str__(self) -> str:
         return f"Токен пользователя {self.user}"
-
-
-class RepositoryFactory:
-    repositories = {"UserRepository": User.objects, "TokenRepository": Token.objects}
-
-    @classmethod
-    def get_repository(cls, name):
-        return cls.repositories.get(name, None)

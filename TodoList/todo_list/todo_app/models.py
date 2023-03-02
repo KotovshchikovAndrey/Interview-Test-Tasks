@@ -31,13 +31,3 @@ class Task(models.Model):
 
     def __str__(self) -> str:
         return f"Задача {self.title} пользователя {self.user}"
-
-
-class RepositoryFactory:
-    repositories = {
-        "TodoRepository": Task.objects,
-    }
-
-    @classmethod
-    def get_repository(cls, name):
-        return cls.repositories.get(name)
