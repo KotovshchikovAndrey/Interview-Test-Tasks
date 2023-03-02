@@ -9,8 +9,6 @@ from todo_app.services.factory import ServiceFactory
 
 
 class TodoViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
@@ -22,6 +20,12 @@ class TodoViewSet(
     serializer_class = TodoSerializer
     service = ServiceFactory.get_service("TodoService")
 
+    def list(self, request):
+        tasks = self.service.get_all_user_tasks(request.user)
+        serializer = self.get_serializer(tasks, many=True)
+
+        return Response(status=200, data=serializer.data)
+
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
@@ -29,13 +33,6 @@ class TodoViewSet(
 
         self.service.create(user=request.user, todo=serializer.data)
         return Response(status=201)
-
-    @action(detail=False, methods=["get"])
-    def user_tasks(self, request):
-        tasks = self.service.get_all_user_tasks(request.user)
-        serializer = self.get_serializer(tasks, many=True)
-
-        return Response(status=200, data=serializer.data)
 
     def get_queryset(self):
         return self.service.get_all()
